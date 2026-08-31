@@ -93,7 +93,7 @@ namespace Hooks
 		}
 
 		const RE::BShkbAnimationGraph* animGraph = SKSE::stl::adjust_pointer<RE::BShkbAnimationGraph>(a_context.character, -0xC0);
-		const auto projectDBData = static_cast<RE::BShkbHkxDB::ProjectDBData*>(animGraph->projectDBData);
+		const auto projectDBData = animGraph->projectDBData;
 
 		const auto symbolIdMap = reinterpret_cast<RE::hkbSymbolIdMap*>(a_context.behavior->eventIDMap.get());
 
@@ -107,7 +107,7 @@ namespace Hooks
 		const auto prefixLength = strlen(syncAnimPrefix);
 
 		RE::BSSynchronizedClipGeneratorUtils::BSHashMapEventFindFunctor findFunctor;
-		findFunctor.map = &projectDBData->eventNamesToIds;
+		findFunctor.map = &projectDBData->unkA0;  // eventNamesToIds
 		float animDuration = hkbClipGenerator_GetAnimDuration(a_clipGenerator);
 
 		// reset triggers to original triggers
@@ -182,7 +182,8 @@ namespace Hooks
 						auto& name = stringData->eventNames[id];
 						if (strlen(name.data()) > prefixLength && !strncmp(syncAnimPrefix, name.data(), prefixLength)) {
 							std::string_view nameWithoutPrefix = name.data() + prefixLength;
-							if (auto it = projectDBData->eventNamesToIds.find(nameWithoutPrefix); it != projectDBData->eventNamesToIds.end()) {
+							auto eventNamesToIds = reinterpret_cast<RE::BSTHashMap<RE::BSFixedString, uint32_t>*>(&projectDBData->unkA0);
+							if (auto it = eventNamesToIds->find(nameWithoutPrefix); it != eventNamesToIds->end()) {
 								const int32_t newExternalId = it->second;
 
 								int32_t newId = hkPointerMap_GetWithDefault(&symbolIdMap->externalToInternalMap, newExternalId + 1, -1);

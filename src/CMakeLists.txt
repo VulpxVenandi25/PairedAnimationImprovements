@@ -1,13 +1,11 @@
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 set(SOURCE_DIR "${ROOT_DIR}/src")
-set(SOURCE_FILES
-	"${SOURCE_DIR}/Hooks.cpp"
-	"${SOURCE_DIR}/Hooks.h"
-	"${SOURCE_DIR}/main.cpp"
-	"${SOURCE_DIR}/Offsets.h"
-	"${SOURCE_DIR}/PCH.h"
-	"${SOURCE_DIR}/RE/Havok.h"
+file(
+	GLOB_RECURSE SOURCE_FILES
+	CONFIGURE_DEPENDS
+		"${SOURCE_DIR}/*.cpp"
+		"${SOURCE_DIR}/*.h"
 )
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})
@@ -73,7 +71,7 @@ target_include_directories(
 		"${SOURCE_DIR}"
 )
 
-add_subdirectory("$ENV{CommonLibSSEPath_NG}" CommonLibSSE EXCLUDE_FROM_ALL)
+add_subdirectory("$ENV{CommonLibSSEPath}" CommonLibSSE EXCLUDE_FROM_ALL)
 
 target_link_libraries(
 	"${PROJECT_NAME}"
